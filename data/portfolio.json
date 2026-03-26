@@ -1,0 +1,21 @@
+[
+  {
+    "holdings": [
+      {
+        "ticker": "NEU",
+        "exchange": "AU",
+        "shares": 100,
+        "cost": 3.5
+      }
+    ],
+    "name": "Personal"
+  },
+  {
+    "holdings": [],
+    "name": "SMSF"
+  },
+  {
+    "holdings": [],
+    "name": "Family Trust"
+  }
+]
