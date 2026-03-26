@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanceDesk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Theme ─────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:       #0a0e17;
+  --bg2:      #0f1420;
+  --card:     #151d2e;
+  --border:   #1e2a42;
+  --border2:  #253352;
+  --txt:      #e2e8f0;
+  --txt2:     #94a3b8;
+  --txt3:     #64748b;
+  --acc:      #3b82f6;
+  --acc2:     #2563eb;
+  --grn:      #10b981;
+  --grn2:     #065f46;
+  --red:      #ef4444;
+  --red2:     #7f1d1d;
+  --cyan:     #06b6d4;
+  --purple:   #8b5cf6;
+  --amber:    #f59e0b;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'DM Sans', system-ui, sans-serif;
+  --radius:   8px;
+  --radius2:  12px;
+}
+html, body { height:100%; background:var(--bg); color:var(--txt); font-family:var(--sans); font-size:14px; }
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg2); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+/* ── Layout ────────────────────────────────────────────── */
+.app { display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+.topnav {
+  display:flex; align-items:center; gap:8px; padding:10px 20px;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.logo { font-family:var(--mono); font-weight:700; font-size:16px; color:var(--acc); letter-spacing:-0.5px; }
+.logo span { color:var(--txt3); font-weight:400; }
+.nav-tabs { display:flex; gap:2px; margin-left:24px; }
+.tab-btn {
+  padding:7px 16px; border:none; border-radius:6px; cursor:pointer;
+  font-family:var(--sans); font-size:13px; font-weight:500;
+  background:transparent; color:var(--txt3); transition:all .15s;
+}
+.tab-btn:hover { color:var(--txt); background:var(--border); }
+.tab-btn.active { color:#fff; background:var(--acc); }
+.nav-right { margin-left:auto; display:flex; align-items:center; gap:12px; }
+.exc-group { display:flex; gap:2px; }
+.exc-btn {
+  padding:5px 12px; border:1px solid var(--border); border-radius:5px;
+  background:transparent; color:var(--txt3); cursor:pointer;
+  font-family:var(--mono); font-size:11px; font-weight:500; transition:all .15s;
+}
+.exc-btn:hover { border-color:var(--border2); color:var(--txt); }
+.exc-btn.active { background:var(--acc); border-color:var(--acc); color:#fff; }
+
+.main { flex:1; overflow-y:auto; padding:20px; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* ── Cards ─────────────────────────────────────────────── */
+.cd { background:var(--card); border:1px solid var(--border); border-radius:var(--radius2); padding:16px; margin-bottom:16px; }
+.cd-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.cd-title { font-weight:600; font-size:15px; }
+.cd-sub { color:var(--txt3); font-size:12px; }
+
+/* ── Buttons ───────────────────────────────────────────── */
+.bn {
+  padding:8px 16px; border:none; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--sans); font-size:13px; font-weight:500; transition:all .15s;
+}
+.bn-p { background:var(--acc); color:#fff; }
+.bn-p:hover { background:var(--acc2); }
+.bn-s { background:var(--border); color:var(--txt); }
+.bn-s:hover { background:var(--border2); }
+.bn-sm { padding:5px 10px; font-size:12px; }
+.bn-icon {
+  width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border); border-radius:var(--radius); background:transparent;
+  color:var(--txt3); cursor:pointer; transition:all .15s;
+}
+.bn-icon:hover { border-color:var(--acc); color:var(--acc); }
+
+/* ── Inputs ────────────────────────────────────────────── */
+.inp {
+  padding:8px 12px; border:1px solid var(--border); border-radius:var(--radius);
+  background:var(--bg2); color:var(--txt); font-family:var(--sans); font-size:13px;
+  outline:none; transition:border-color .15s;
+}
+.inp:focus { border-color:var(--acc); }
+.inp::placeholder { color:var(--txt3); }
+select.inp { cursor:pointer; }
+
+/* ── Badges ────────────────────────────────────────────── */
+.bg { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; font-family:var(--mono); }
+.bg-g { background:var(--grn2); color:var(--grn); }
+.bg-r { background:var(--red2); color:var(--red); }
+.bg-c { background:#083344; color:var(--cyan); }
+.bg-p { background:#2e1065; color:var(--purple); }
+.bg-a { background:#451a03; color:var(--amber); }
+.bg-b { background:#1e2a42; color:var(--acc); }
+
+/* ── Positive / Negative ──────────────────────────────── */
+.pos { color:var(--grn); }
+.neg { color:var(--red); }
+
+/* ── Table ─────────────────────────────────────────────── */
+.tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.tbl th {
+  text-align:left; padding:8px 10px; color:var(--txt3); font-weight:500;
+  border-bottom:1px solid var(--border); cursor:pointer; user-select:none;
+  font-size:11px; text-transform:uppercase; letter-spacing:0.5px;
+}
+.tbl th:hover { color:var(--txt); }
+.tbl th .sort-arrow { margin-left:4px; font-size:10px; }
+.tbl td { padding:8px 10px; border-bottom:1px solid var(--border); }
+.tbl tr:hover td { background:var(--bg2); }
+.tbl .mono { font-family:var(--mono); font-size:12px; }
+.tbl .right { text-align:right; }
+.ticker-cell { font-family:var(--mono); font-weight:600; color:var(--acc); }
+
+/* ── Market Status ─────────────────────────────────────── */
+.mkt-dot {
+  width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px;
+}
+.mkt-open { background:var(--grn); animation:pulse 2s infinite; }
+.mkt-closed { background:var(--red); }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+.mkt-status { display:flex; align-items:center; font-size:12px; color:var(--txt3); }
+
+/* ── Screener Filters ──────────────────────────────────── */
+.filters-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+.filter-group { display:flex; align-items:center; gap:6px; }
+.filter-group label { font-size:11px; color:var(--txt3); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+.range-display { font-family:var(--mono); font-size:11px; color:var(--txt2); min-width:80px; text-align:center; }
+
+/* ── Stock Tab ─────────────────────────────────────────── */
+.stk-search { display:flex; gap:8px; align-items:center; margin-bottom:16px; }
+.stk-layout { display:grid; grid-template-columns:1fr 340px; gap:16px; }
+.stk-price { font-family:var(--mono); font-size:28px; font-weight:700; }
+.stk-change { font-family:var(--mono); font-size:16px; margin-left:12px; }
+.stk-period { display:flex; gap:4px; margin-top:12px; }
+.stk-period button {
+  padding:4px 12px; border:1px solid var(--border); border-radius:4px;
+  background:transparent; color:var(--txt3); cursor:pointer;
+  font-family:var(--mono); font-size:11px; transition:all .15s;
+}
+.stk-period button:hover { border-color:var(--border2); color:var(--txt); }
+.stk-period button.active { background:var(--acc); border-color:var(--acc); color:#fff; }
+.stk-chart-area { height:360px; margin-top:16px; }
+.stk-funds { display:flex; flex-direction:column; gap:12px; max-height:calc(100vh - 180px); overflow-y:auto; }
+.stk-fund-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:12px; }
+.stk-fund-card h4 { font-size:12px; color:var(--acc); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.stk-fund-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.stk-fund-row .fl { color:var(--txt3); }
+.stk-fund-row .fv { font-family:var(--mono); font-weight:500; }
+.stk-empty { text-align:center; padding:80px 20px; color:var(--txt3); }
+.stk-empty svg { margin-bottom:16px; opacity:0.3; }
+
+/* ── Portfolio ─────────────────────────────────────────── */
+.pf-layout { display:grid; grid-template-columns:220px 1fr; gap:16px; }
+.pf-sidebar { display:flex; flex-direction:column; gap:4px; }
+.pf-entity {
+  padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius);
+  background:transparent; color:var(--txt2); cursor:pointer; text-align:left;
+  font-family:var(--sans); font-size:13px; transition:all .15s;
+}
+.pf-entity:hover { background:var(--bg2); color:var(--txt); }
+.pf-entity.active { background:var(--acc); border-color:var(--acc); color:#fff; }
+.pf-add-entity {
+  padding:8px; border:1px dashed var(--border); border-radius:var(--radius);
+  background:transparent; color:var(--txt3); cursor:pointer; font-size:12px;
+  text-align:center; transition:all .15s;
+}
+.pf-add-entity:hover { border-color:var(--acc); color:var(--acc); }
+.pf-summary { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:16px; }
+.pf-stat { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:12px; }
+.pf-stat-label { font-size:11px; color:var(--txt3); text-transform:uppercase; letter-spacing:0.5px; }
+.pf-stat-val { font-family:var(--mono); font-size:20px; font-weight:600; margin-top:4px; }
+.weight-bar { height:4px; background:var(--border); border-radius:2px; margin-top:4px; }
+.weight-bar-fill { height:100%; background:var(--acc); border-radius:2px; transition:width .3s; }
+
+/* ── Calendar ──────────────────────────────────────────── */
+.cal-layout { display:grid; grid-template-columns:1fr 300px; gap:16px; }
+.cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.cal-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:1px; background:var(--border); border-radius:var(--radius); overflow:hidden; }
+.cal-day-header { padding:8px; text-align:center; background:var(--bg2); color:var(--txt3); font-size:11px; font-weight:600; text-transform:uppercase; }
+.cal-day {
+  min-height:80px; padding:6px; background:var(--card); cursor:pointer; transition:background .15s;
+}
+.cal-day:hover { background:var(--bg2); }
+.cal-day.other-month { opacity:0.3; }
+.cal-day.today { box-shadow:inset 0 0 0 2px var(--acc); }
+.cal-day-num { font-size:12px; font-weight:600; margin-bottom:4px; }
+.cal-event-dot { font-size:10px; padding:1px 5px; border-radius:3px; margin-bottom:2px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-sidebar .cd { margin-bottom:8px; }
+.cal-event-item { padding:8px; border-left:3px solid var(--acc); background:var(--bg2); border-radius:0 var(--radius) var(--radius) 0; margin-bottom:6px; }
+.cal-event-item .ev-title { font-weight:600; font-size:13px; }
+.cal-event-item .ev-meta { font-size:11px; color:var(--txt3); margin-top:2px; }
+
+/* ── Modal ─────────────────────────────────────────────── */
+.modal-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7);
+  display:flex; align-items:center; justify-content:center; z-index:100;
+}
+.modal {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius2);
+  padding:24px; width:420px; max-width:90vw;
+}
+.modal h3 { margin-bottom:16px; font-size:16px; }
+.modal .form-row { margin-bottom:12px; }
+.modal .form-row label { display:block; font-size:11px; color:var(--txt3); text-transform:uppercase; margin-bottom:4px; }
+.modal .form-row .inp { width:100%; }
+.modal .form-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+
+/* ── Loading ───────────────────────────────────────────── */
+.loading { text-align:center; padding:40px; color:var(--txt3); }
+.spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--acc); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── Fade in ───────────────────────────────────────────── */
+.fi { animation:fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width:900px) {
+  .stk-layout { grid-template-columns:1fr; }
+  .pf-layout { grid-template-columns:1fr; }
+  .cal-layout { grid-template-columns:1fr; }
+  .pf-summary { grid-template-columns:repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Top Nav -->
+  <div class="topnav">
+    <div class="logo">FinanceDesk<span>.py</span></div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('screener')">Screener</button>
+      <button class="tab-btn" onclick="switchTab('stock')">Stock</button>
+      <button class="tab-btn" onclick="switchTab('portfolio')">Portfolio</button>
+      <button class="tab-btn" onclick="switchTab('calendar')">Calendar</button>
+    </div>
+    <div class="nav-right">
+      <div class="mkt-status" id="mktStatus">
+        <span class="mkt-dot mkt-closed"></span>
+        <span>Market Closed</span>
+      </div>
+      <div class="exc-group">
+        <button class="exc-btn active" onclick="setExchange('AU')">ASX</button>
+        <button class="exc-btn" onclick="setExchange('US')">NYSE/NASDAQ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- ═══════════ SCREENER TAB ═══════════ -->
+    <div class="tab-content active" id="tab-screener">
+      <div class="cd fi">
+        <div class="cd-header">
+          <div>
+            <div class="cd-title">Stock Screener</div>
+            <div class="cd-sub" id="screenerCount">Loading...</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input class="inp" id="screenerSearch" placeholder="Filter by ticker or name..." oninput="filterScreener()" style="width:220px">
+            <button class="bn bn-s bn-sm" onclick="loadScreener()">&#x21BB; Refresh</button>
+          </div>
+        </div>
+        <div class="filters-bar" id="filtersBar">
+          <div class="filter-group">
+            <label>Mkt Cap</label>
+            <input type="range" id="mcapMin" min="0" max="100" value="0" oninput="applyFilters()">
+            <input type="range" id="mcapMax" min="0" max="100" value="100" oninput="applyFilters()">
+            <span class="range-display" id="mcapRange">All</span>
+          </div>
+          <div class="filter-group">
+            <label>P/E</label>
+            <input type="range" id="peMin" min="0" max="200" value="0" oninput="applyFilters()">
+            <input type="range" id="peMax" min="0" max="200" value="200" oninput="applyFilters()">
+            <span class="range-display" id="peRange">All</span>
+          </div>
+          <div class="filter-group">
+            <label>Sector</label>
+            <select class="inp" id="sectorFilter" onchange="applyFilters()" style="width:140px">
+              <option value="">All Sectors</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="screenerTable">
+            <thead>
+              <tr>
+                <th onclick="sortScreener('ticker')">Ticker <span class="sort-arrow"></span></th>
+                <th onclick="sortScreener('name')">Name</th>
+                <th onclick="sortScreener('price')" class="right">Price</th>
+                <th onclick="sortScreener('change_p')" class="right">Change%</th>
+                <th onclick="sortScreener('mktcap')" class="right">Market Cap</th>
+                <th onclick="sortScreener('ev')" class="right">EV</th>
+                <th onclick="sortScreener('pe')" class="right">P/E</th>
+                <th onclick="sortScreener('divYield')" class="right">Div Yield</th>
+                <th onclick="sortScreener('volume')" class="right">Volume</th>
+                <th>Sector</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="screenerBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ STOCK TAB ═══════════ -->
+    <div class="tab-content" id="tab-stock">
+      <div class="stk-search fi">
+        <input class="inp" id="stkTicker" placeholder="Enter ticker (e.g. CBA, AAPL)" style="width:200px"
+               onkeydown="if(event.key==='Enter')lookupStock()">
+        <select class="inp" id="stkExchange">
+          <option value="AU">ASX</option>
+          <option value="US">NYSE/NASDAQ</option>
+        </select>
+        <button class="bn bn-p" onclick="lookupStock()">Lookup</button>
+      </div>
+
+      <div id="stkEmpty" class="stk-empty fi">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/>
+        </svg>
+        <div style="font-size:16px;font-weight:500;margin-bottom:4px">Search for a stock</div>
+        <div style="font-size:13px">Enter a ticker symbol and press Lookup</div>
+      </div>
+
+      <div id="stkLoading" class="loading" style="display:none">
+        <div class="spinner"></div>
+        <div style="margin-top:8px">Fetching data...</div>
+      </div>
+
+      <div id="stkContent" style="display:none">
+        <div class="cd fi" style="margin-bottom:16px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span id="stkName" style="font-size:18px;font-weight:600"></span>
+            <span id="stkSymbol" style="font-family:var(--mono);color:var(--txt3);font-size:13px"></span>
+          </div>
+          <div style="display:flex;align-items:baseline;margin-top:4px">
+            <span class="stk-price" id="stkPrice"></span>
+            <span class="stk-change" id="stkChange"></span>
+          </div>
+        </div>
+
+        <div class="stk-layout">
+          <div>
+            <div class="cd">
+              <div class="cd-title">Price History</div>
+              <div class="stk-period" id="stkPeriodBtns">
+                <button onclick="changePeriod('1m')">1M</button>
+                <button onclick="changePeriod('3m')">3M</button>
+                <button onclick="changePeriod('6m')">6M</button>
+                <button class="active" onclick="changePeriod('1y')">1Y</button>
+                <button onclick="changePeriod('2y')">2Y</button>
+                <button onclick="changePeriod('5y')">5Y</button>
+              </div>
+              <div class="stk-chart-area">
+                <canvas id="stkChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="stk-funds" id="stkFunds"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ PORTFOLIO TAB ═══════════ -->
+    <div class="tab-content" id="tab-portfolio">
+      <div class="pf-layout fi">
+        <div>
+          <div class="cd-title" style="margin-bottom:12px">Entities</div>
+          <div class="pf-sidebar" id="pfSidebar"></div>
+          <button class="pf-add-entity" onclick="addEntity()" style="margin-top:8px">+ Add Entity</button>
+        </div>
+        <div>
+          <div class="pf-summary" id="pfSummary"></div>
+          <div class="cd">
+            <div class="cd-header">
+              <div class="cd-title" id="pfEntityTitle">Holdings</div>
+              <button class="bn bn-p bn-sm" onclick="showAddHolding()">+ Add Holding</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="tbl" id="pfTable">
+                <thead>
+                  <tr>
+                    <th>Ticker</th>
+                    <th>Exchange</th>
+                    <th class="right">Shares</th>
+                    <th class="right">Avg Cost</th>
+                    <th class="right">Price</th>
+                    <th class="right">Mkt Value</th>
+                    <th class="right">P&amp;L</th>
+                    <th class="right">P&amp;L %</th>
+                    <th class="right">Day Chg%</th>
+                    <th>Weight</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="pfBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ CALENDAR TAB ═══════════ -->
+    <div class="tab-content" id="tab-calendar">
+      <div class="cal-layout fi">
+        <div>
+          <div class="cd">
+            <div class="cal-header">
+              <button class="bn bn-s bn-sm" onclick="calNav(-1)">&larr; Prev</button>
+              <div class="cd-title" id="calTitle"></div>
+              <button class="bn bn-s bn-sm" onclick="calNav(1)">Next &rarr;</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+        </div>
+        <div class="cal-sidebar">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="cd-title" id="calDayTitle">Events</div>
+            <button class="bn bn-p bn-sm" onclick="showAddEvent()">+ Add Event</button>
+          </div>
+          <div id="calEvents"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.main -->
+</div><!-- /.app -->
+
+<!-- Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// State
+// ══════════════════════════════════════════════════════════════
+let currentTab = 'screener';
+let currentExchange = 'AU';
+let screenerData = [];
+let filteredData = [];
+let sortCol = 'mktcap';
+let sortDir = -1;
+let portfolio = [];
+let currentEntity = 0;
+let pfPrices = {};
+let events = [];
+let calYear, calMonth, calSelectedDate;
+let watchlist = [];
+let stkCurrentTicker = '';
+let stkCurrentExchange = '';
+let stkCurrentPeriod = '1y';
+let chartInstance = null;
+
+const CURRENCY = { AU: 'A$', US: '$' };
+
+// ══════════════════════════════════════════════════════════════
+// Init
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  calSelectedDate = now.toISOString().slice(0, 10);
+
+  loadScreener();
+  loadPortfolio();
+  loadEvents();
+  loadWatchlist();
+  updateMarketStatus();
+  setInterval(updateMarketStatus, 60000);
+});
+
+// ══════════════════════════════════════════════════════════════
+// Navigation
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function setExchange(ex) {
+  currentExchange = ex;
+  document.querySelectorAll('.exc-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (currentTab === 'screener') loadScreener();
+}
+
+// ══════════════════════════════════════════════════════════════
+// Market Status
+// ══════════════════════════════════════════════════════════════
+function updateMarketStatus() {
+  const now = new Date();
+  const el = document.getElementById('mktStatus');
+  // Simple check: ASX 10-16 AEST, US 9:30-16 EST
+  const aestH = new Date(now.toLocaleString('en-US', {timeZone:'Australia/Sydney'})).getHours();
+  const estH = new Date(now.toLocaleString('en-US', {timeZone:'America/New_York'})).getHours();
+  const day = now.getDay();
+  let open = false;
+  if (day >= 1 && day <= 5) {
+    if (currentExchange === 'AU' && aestH >= 10 && aestH < 16) open = true;
+    if (currentExchange === 'US' && estH >= 9 && estH < 16) open = true;
+  }
+  el.innerHTML = open
+    ? '<span class="mkt-dot mkt-open"></span><span>Market Open</span>'
+    : '<span class="mkt-dot mkt-closed"></span><span>Market Closed</span>';
+}
+
+// ══════════════════════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════════════════════
+function fmtNum(v, prefix='', suffix='', dec=2) {
+  if (v == null || isNaN(v)) return '\u2014';
+  v = Number(v);
+  if (Math.abs(v) >= 1e12) return prefix + (v/1e12).toFixed(dec) + 'T' + suffix;
+  if (Math.abs(v) >= 1e9) return prefix + (v/1e9).toFixed(dec) + 'B' + suffix;
+  if (Math.abs(v) >= 1e6) return prefix + (v/1e6).toFixed(dec) + 'M' + suffix;
+  return prefix + v.toLocaleString(undefined, {minimumFractionDigits:dec, maximumFractionDigits:dec}) + suffix;
+}
+
+function fmtPct(v) {
+  if (v == null || isNaN(v)) return '\u2014';
+  return (v >= 0 ? '+' : '') + Number(v).toFixed(2) + '%';
+}
+
+function changePctClass(v) {
+  return v >= 0 ? 'pos' : 'neg';
+}
+
+function cur() { return CURRENCY[currentExchange] || '$'; }
+
+// ══════════════════════════════════════════════════════════════
+// SCREENER
+// ══════════════════════════════════════════════════════════════
+async function loadScreener() {
+  const body = document.getElementById('screenerBody');
+  body.innerHTML = '<tr><td colspan="11" class="loading"><div class="spinner"></div></td></tr>';
+
+  try {
+    const res = await fetch(`/api/screener?exchange=${currentExchange}&mock=0`);
+    screenerData = await res.json();
+  } catch {
+    screenerData = [];
+  }
+
+  // Populate sector filter
+  const sectors = [...new Set(screenerData.map(s => s.sector).filter(Boolean))].sort();
+  const sel = document.getElementById('sectorFilter');
+  sel.innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
+
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = document.getElementById('screenerSearch').value.toLowerCase();
+  const mcapMin = Number(document.getElementById('mcapMin').value);
+  const mcapMax = Number(document.getElementById('mcapMax').value);
+  const peMin = Number(document.getElementById('peMin').value);
+  const peMax = Number(document.getElementById('peMax').value);
+  const sector = document.getElementById('sectorFilter').value;
+
+  // Map slider 0-100 to market cap values (log scale)
+  const mcapScale = v => v === 0 ? 0 : Math.pow(10, 6 + (v / 100) * 7); // 1M to 10T
+  const mcapLo = mcapScale(mcapMin);
+  const mcapHi = mcapScale(mcapMax);
+
+  document.getElementById('mcapRange').textContent = mcapMin === 0 && mcapMax === 100 ? 'All'
+    : fmtNum(mcapLo, '$') + ' \u2013 ' + fmtNum(mcapHi, '$');
+  document.getElementById('peRange').textContent = peMin === 0 && peMax === 200 ? 'All'
+    : peMin + ' \u2013 ' + (peMax >= 200 ? '\u221E' : peMax);
+
+  filteredData = screenerData.filter(s => {
+    if (search && !s.ticker.toLowerCase().includes(search) && !(s.name||'').toLowerCase().includes(search)) return false;
+    if (s.mktcap < mcapLo || s.mktcap > mcapHi) return false;
+    const pe = s.pe || 0;
+    if (pe > 0 && (pe < peMin || (peMax < 200 && pe > peMax))) return false;
+    if (sector && s.sector !== sector) return false;
+    return true;
+  });
+
+  sortAndRender();
+}
+
+function sortScreener(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = -1; }
+  sortAndRender();
+}
+
+function sortAndRender() {
+  filteredData.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') return sortDir * va.localeCompare(vb);
+    return sortDir * ((va||0) - (vb||0));
+  });
+  renderScreener();
+}
+
+function filterScreener() { applyFilters(); }
+
+function renderScreener() {
+  const body = document.getElementById('screenerBody');
+  document.getElementById('screenerCount').textContent = `${filteredData.length} stocks \u2022 ${currentExchange === 'AU' ? 'ASX' : 'NYSE/NASDAQ'}`;
+
+  if (filteredData.length === 0) {
+    body.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--txt3)">No stocks match your filters</td></tr>';
+    return;
+  }
+
+  body.innerHTML = filteredData.map(s => {
+    const cls = changePctClass(s.change_p);
+    const isWatched = watchlist.includes(s.ticker);
+    return `<tr>
+      <td class="ticker-cell">${s.ticker}</td>
+      <td>${s.name || ''}</td>
+      <td class="mono right">${cur()}${Number(s.price).toFixed(2)}</td>
+      <td class="mono right ${cls}">${fmtPct(s.change_p)}</td>
+      <td class="mono right">${fmtNum(s.mktcap, cur())}</td>
+      <td class="mono right">${fmtNum(s.ev, cur())}</td>
+      <td class="mono right">${s.pe ? Number(s.pe).toFixed(1) : '\u2014'}</td>
+      <td class="mono right">${s.divYield ? s.divYield.toFixed(1) + '%' : '\u2014'}</td>
+      <td class="mono right">${Number(s.volume).toLocaleString()}</td>
+      <td><span class="bg bg-b">${s.sector || ''}</span></td>
+      <td style="white-space:nowrap">
+        <button class="bn-icon" title="${isWatched?'Remove from':'Add to'} watchlist" onclick="toggleWatchlist('${s.ticker}')">${isWatched?'\u2605':'\u2606'}</button>
+        <button class="bn-icon" title="View stock" onclick="goToStock('${s.ticker}','${currentExchange}')">\u279C</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleWatchlist(ticker) {
+  const idx = watchlist.indexOf(ticker);
+  if (idx >= 0) watchlist.splice(idx, 1);
+  else watchlist.push(ticker);
+  fetch('/api/watchlist', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(watchlist)});
+  renderScreener();
+}
+
+function goToStock(ticker, exchange) {
+  document.getElementById('stkTicker').value = ticker;
+  document.getElementById('stkExchange').value = exchange;
+  // Switch tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[1].classList.add('active');
+  document.getElementById('tab-stock').classList.add('active');
+  currentTab = 'stock';
+  lookupStock();
+}
+
+// ══════════════════════════════════════════════════════════════
+// STOCK TAB
+// ══════════════════════════════════════════════════════════════
+async function lookupStock() {
+  const ticker = document.getElementById('stkTicker').value.trim().toUpperCase();
+  const exchange = document.getElementById('stkExchange').value;
+  if (!ticker) return;
+
+  stkCurrentTicker = ticker;
+  stkCurrentExchange = exchange;
+
+  document.getElementById('stkEmpty').style.display = 'none';
+  document.getElementById('stkContent').style.display = 'none';
+  document.getElementById('stkLoading').style.display = 'block';
+
+  try {
+    const [quoteRes, histRes, fundRes] = await Promise.all([
+      fetch(`/api/quote?ticker=${ticker}&exchange=${exchange}`),
+      fetch(`/api/history?ticker=${ticker}&exchange=${exchange}&period=${stkCurrentPeriod}`),
+      fetch(`/api/fundamentals?ticker=${ticker}&exchange=${exchange}`),
+    ]);
+
+    const quote = await quoteRes.json();
+    const hist = await histRes.json();
+    const fund = await fundRes.json();
+
+    if (quote.error) throw new Error(quote.error);
+
+    renderStockQuote(quote);
+    renderStockChart(hist, quote.change_p >= 0);
+    renderFundamentals(fund);
+
+    document.getElementById('stkLoading').style.display = 'none';
+    document.getElementById('stkContent').style.display = 'block';
+  } catch (e) {
+    document.getElementById('stkLoading').style.display = 'none';
+    document.getElementById('stkEmpty').style.display = 'block';
+    document.getElementById('stkEmpty').innerHTML = `
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <div style="font-size:16px;font-weight:500;margin-top:12px">Could not fetch data for ${ticker}</div>
+      <div style="font-size:13px;margin-top:4px">Check the ticker symbol and try again. yfinance may not have data for this security.</div>
+    `;
+  }
+}
+
+function renderStockQuote(q) {
+  const c = CURRENCY[q.exchange] || '$';
+  document.getElementById('stkName').textContent = q.name || q.ticker;
+  document.getElementById('stkSymbol').textContent = `${q.ticker} \u2022 ${q.exchange === 'AU' ? 'ASX' : 'NYSE/NASDAQ'}`;
+  document.getElementById('stkPrice').textContent = c + Number(q.price).toFixed(2);
+  const cls = q.change_p >= 0 ? 'pos' : 'neg';
+  document.getElementById('stkChange').innerHTML = `<span class="${cls}">${fmtPct(q.change_p)}</span>`;
+}
+
+function renderStockChart(hist, isPositive) {
+  const ctx = document.getElementById('stkChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  const color = isPositive ? '#10b981' : '#ef4444';
+  const bgColor = isPositive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: hist.map(d => d.date),
+      datasets: [{
+        data: hist.map(d => d.close),
+        borderColor: color,
+        backgroundColor: bgColor,
+        borderWidth: 2,
+        fill: true,
+        pointRadius: 0,
+        pointHitRadius: 10,
+        tension: 0.3,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#151d2e',
+          borderColor: '#1e2a42',
+          borderWidth: 1,
+          titleColor: '#94a3b8',
+          bodyColor: '#e2e8f0',
+          bodyFont: { family: "'JetBrains Mono'" },
+          callbacks: {
+            label: ctx => (CURRENCY[stkCurrentExchange]||'$') + ctx.parsed.y.toFixed(2),
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: '#1e2a42' },
+          ticks: {
+            color: '#64748b', maxTicksLimit: 8, font: { size: 11 },
+            callback: function(val, idx) {
+              const d = new Date(this.getLabelForValue(val));
+              return d.toLocaleDateString('en-AU', {month:'short', year:'2-digit'});
+            },
+          },
+        },
+        y: {
+          grid: { color: '#1e2a42' },
+          ticks: { color: '#64748b', font: { family: "'JetBrains Mono'", size: 11 } },
+          position: 'right',
+        },
+      },
+      interaction: { intersect: false, mode: 'index' },
+    },
+  });
+}
+
+async function changePeriod(period) {
+  stkCurrentPeriod = period;
+  document.querySelectorAll('.stk-period button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  try {
+    const res = await fetch(`/api/history?ticker=${stkCurrentTicker}&exchange=${stkCurrentExchange}&period=${period}`);
+    const hist = await res.json();
+    const isPos = hist.length >= 2 ? hist[hist.length-1].close >= hist[0].close : true;
+    renderStockChart(hist, isPos);
+  } catch {}
+}
+
+function renderFundamentals(f) {
+  const el = document.getElementById('stkFunds');
+  if (f.error) { el.innerHTML = '<div class="stk-fund-card"><p style="color:var(--txt3)">Fundamentals not available</p></div>'; return; }
+
+  const c = CURRENCY[stkCurrentExchange] || '$';
+  const row = (label, val) => `<div class="stk-fund-row"><span class="fl">${label}</span><span class="fv">${val ?? '\u2014'}</span></div>`;
+  const pct = v => v != null ? (v * 100).toFixed(1) + '%' : '\u2014';
+
+  const h = f.highlights || {};
+  const d = f.dividends || {};
+  const s = f.shares || {};
+  const t = f.technicals || {};
+  const g = f.general || {};
+
+  el.innerHTML = `
+    <div class="stk-fund-card">
+      <h4>Key Statistics</h4>
+      ${row('Market Cap', fmtNum(h.marketCap, c))}
+      ${row('Enterprise Value', fmtNum(h.enterpriseValue, c))}
+      ${row('P/E Ratio', h.pe != null ? Number(h.pe).toFixed(1) : '\u2014')}
+      ${row('Forward P/E', h.forwardPE != null ? Number(h.forwardPE).toFixed(1) : '\u2014')}
+      ${row('PEG Ratio', h.peg != null ? Number(h.peg).toFixed(2) : '\u2014')}
+      ${row('EPS', h.eps != null ? c + Number(h.eps).toFixed(2) : '\u2014')}
+      ${row('Revenue TTM', fmtNum(h.revenueTTM, c))}
+      ${row('EBITDA', fmtNum(h.ebitda, c))}
+      ${row('Profit Margin', pct(h.profitMargin))}
+      ${row('Operating Margin', pct(h.operatingMargin))}
+    </div>
+    <div class="stk-fund-card">
+      <h4>Dividends &amp; Returns</h4>
+      ${row('Dividend Yield', pct(d.dividendYield))}
+      ${row('Dividend Rate', d.dividendRate != null ? c + Number(d.dividendRate).toFixed(2) : '\u2014')}
+      ${row('Payout Ratio', pct(d.payoutRatio))}
+      ${row('ROE', pct(d.roe))}
+      ${row('ROA', pct(d.roa))}
+    </div>
+    <div class="stk-fund-card">
+      <h4>Shares &amp; Ownership</h4>
+      ${row('Shares Outstanding', fmtNum(s.sharesOutstanding))}
+      ${row('Float', fmtNum(s.floatShares))}
+      ${row('% Insiders', pct(s.insiderPct))}
+      ${row('% Institutions', pct(s.institutionPct))}
+      ${row('Short Ratio', s.shortRatio != null ? Number(s.shortRatio).toFixed(2) : '\u2014')}
+    </div>
+    <div class="stk-fund-card">
+      <h4>Technicals</h4>
+      ${row('52-Week High', t.fiftyTwoWeekHigh != null ? c + Number(t.fiftyTwoWeekHigh).toFixed(2) : '\u2014')}
+      ${row('52-Week Low', t.fiftyTwoWeekLow != null ? c + Number(t.fiftyTwoWeekLow).toFixed(2) : '\u2014')}
+      ${row('50-Day MA', t.fiftyDayAvg != null ? c + Number(t.fiftyDayAvg).toFixed(2) : '\u2014')}
+      ${row('200-Day MA', t.twoHundredDayAvg != null ? c + Number(t.twoHundredDayAvg).toFixed(2) : '\u2014')}
+      ${row('Beta', t.beta != null ? Number(t.beta).toFixed(2) : '\u2014')}
+    </div>
+    <div class="stk-fund-card">
+      <h4>Company Info</h4>
+      ${row('Sector', g.sector)}
+      ${row('Industry', g.industry)}
+      ${row('Country', g.country)}
+      ${row('Exchange', g.exchange === 'AU' ? 'ASX' : 'NYSE/NASDAQ')}
+      ${g.website ? `<a href="${g.website}" target="_blank" style="color:var(--acc);font-size:12px;display:block;margin-top:4px">${g.website}</a>` : ''}
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════
+// PORTFOLIO
+// ══════════════════════════════════════════════════════════════
+async function loadPortfolio() {
+  try {
+    const res = await fetch('/api/portfolio');
+    portfolio = await res.json();
+  } catch {
+    portfolio = [
+      {name:'Personal', holdings:[]},
+      {name:'SMSF', holdings:[]},
+      {name:'Family Trust', holdings:[]},
+    ];
+  }
+  renderPortfolioSidebar();
+  renderPortfolioHoldings();
+}
+
+function renderPortfolioSidebar() {
+  const el = document.getElementById('pfSidebar');
+  el.innerHTML = portfolio.map((e, i) =>
+    `<button class="pf-entity ${i===currentEntity?'active':''}" onclick="selectEntity(${i})">${e.name} <span style="color:${i===currentEntity?'rgba(255,255,255,.6)':'var(--txt3)'};font-size:11px">(${e.holdings.length})</span></button>`
+  ).join('');
+}
+
+function selectEntity(idx) {
+  currentEntity = idx;
+  renderPortfolioSidebar();
+  renderPortfolioHoldings();
+}
+
+function addEntity() {
+  const name = prompt('Entity name:');
+  if (!name) return;
+  portfolio.push({name, holdings:[]});
+  savePortfolio();
+  currentEntity = portfolio.length - 1;
+  renderPortfolioSidebar();
+  renderPortfolioHoldings();
+}
+
+function savePortfolio() {
+  fetch('/api/portfolio', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(portfolio)});
+}
+
+async function renderPortfolioHoldings() {
+  const entity = portfolio[currentEntity];
+  if (!entity) return;
+  document.getElementById('pfEntityTitle').textContent = entity.name + ' Holdings';
+  const body = document.getElementById('pfBody');
+
+  if (entity.holdings.length === 0) {
+    body.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--txt3)">No holdings yet. Click "+ Add Holding" to get started.</td></tr>';
+    renderSummary(entity, {});
+    return;
+  }
+
+  body.innerHTML = '<tr><td colspan="11" class="loading"><div class="spinner"></div></td></tr>';
+
+  // Fetch prices
+  try {
+    const res = await fetch('/api/portfolio/prices', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(entity.holdings.map(h => ({ticker:h.ticker, exchange:h.exchange}))),
+    });
+    pfPrices = await res.json();
+  } catch { pfPrices = {}; }
+
+  let totalMktVal = 0;
+  const rows = entity.holdings.map(h => {
+    const key = `${h.ticker}.${h.exchange}`;
+    const p = pfPrices[key] || {};
+    const price = p.price || 0;
+    const mktVal = price * h.shares;
+    totalMktVal += mktVal;
+    return {...h, price, mktVal, dayChg: p.change_p || 0};
+  });
+
+  renderSummary(entity, rows);
+
+  body.innerHTML = rows.map((h, i) => {
+    const costBasis = h.cost * h.shares;
+    const pl = h.mktVal - costBasis;
+    const plPct = costBasis > 0 ? (pl / costBasis * 100) : 0;
+    const weight = totalMktVal > 0 ? (h.mktVal / totalMktVal * 100) : 0;
+    const c = CURRENCY[h.exchange] || '$';
+    const plCls = pl >= 0 ? 'pos' : 'neg';
+    return `<tr>
+      <td class="ticker-cell">${h.ticker}</td>
+      <td class="mono">${h.exchange === 'AU' ? 'ASX' : 'US'}</td>
+      <td class="mono right">${h.shares.toLocaleString()}</td>
+      <td class="mono right">${c}${Number(h.cost).toFixed(2)}</td>
+      <td class="mono right">${h.price ? c + h.price.toFixed(2) : '\u2014'}</td>
+      <td class="mono right">${fmtNum(h.mktVal, c)}</td>
+      <td class="mono right ${plCls}">${fmtNum(pl, c)}</td>
+      <td class="mono right ${plCls}">${fmtPct(plPct)}</td>
+      <td class="mono right ${changePctClass(h.dayChg)}">${fmtPct(h.dayChg)}</td>
+      <td style="min-width:80px">
+        <div style="font-size:11px;font-family:var(--mono);margin-bottom:2px">${weight.toFixed(1)}%</div>
+        <div class="weight-bar"><div class="weight-bar-fill" style="width:${weight}%"></div></div>
+      </td>
+      <td><button class="bn-icon" title="Remove" onclick="removeHolding(${i})">\u2715</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSummary(entity, rows) {
+  const el = document.getElementById('pfSummary');
+  if (!Array.isArray(rows) || rows.length === 0) {
+    el.innerHTML = ['Total Value','Cost Basis','Total P&L','Day Change'].map(l =>
+      `<div class="pf-stat"><div class="pf-stat-label">${l}</div><div class="pf-stat-val">\u2014</div></div>`
+    ).join('');
+    return;
+  }
+  let totalVal=0, totalCost=0, totalDayChg=0;
+  rows.forEach(h => {
+    totalVal += h.mktVal || 0;
+    totalCost += (h.cost || 0) * (h.shares || 0);
+  });
+  const totalPL = totalVal - totalCost;
+  const plPct = totalCost > 0 ? (totalPL / totalCost * 100) : 0;
+
+  el.innerHTML = `
+    <div class="pf-stat"><div class="pf-stat-label">Total Value</div><div class="pf-stat-val">${fmtNum(totalVal, '$')}</div></div>
+    <div class="pf-stat"><div class="pf-stat-label">Cost Basis</div><div class="pf-stat-val">${fmtNum(totalCost, '$')}</div></div>
+    <div class="pf-stat"><div class="pf-stat-label">Total P&amp;L</div><div class="pf-stat-val ${totalPL>=0?'pos':'neg'}">${fmtNum(totalPL, '$')} (${fmtPct(plPct)})</div></div>
+    <div class="pf-stat"><div class="pf-stat-label">Holdings</div><div class="pf-stat-val">${rows.length}</div></div>
+  `;
+}
+
+function showAddHolding() {
+  const html = `
+    <div class="modal-overlay" id="holdingModal" onclick="if(event.target===this)this.remove()">
+      <div class="modal">
+        <h3>Add Holding</h3>
+        <div class="form-row"><label>Ticker</label><input class="inp" id="hTicker" placeholder="e.g. CBA"></div>
+        <div class="form-row"><label>Exchange</label>
+          <select class="inp" id="hExchange"><option value="AU">ASX</option><option value="US">NYSE/NASDAQ</option></select>
+        </div>
+        <div class="form-row"><label>Shares</label><input class="inp" id="hShares" type="number" placeholder="100"></div>
+        <div class="form-row"><label>Avg Cost</label><input class="inp" id="hCost" type="number" step="0.01" placeholder="128.50"></div>
+        <div class="form-actions">
+          <button class="bn bn-s" onclick="document.getElementById('holdingModal').remove()">Cancel</button>
+          <button class="bn bn-p" onclick="addHolding()">Add</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function addHolding() {
+  const ticker = document.getElementById('hTicker').value.trim().toUpperCase();
+  const exchange = document.getElementById('hExchange').value;
+  const shares = Number(document.getElementById('hShares').value);
+  const cost = Number(document.getElementById('hCost').value);
+  if (!ticker || !shares) return;
+
+  portfolio[currentEntity].holdings.push({ticker, exchange, shares, cost});
+  savePortfolio();
+  document.getElementById('holdingModal').remove();
+  renderPortfolioHoldings();
+}
+
+function removeHolding(idx) {
+  if (!confirm('Remove this holding?')) return;
+  portfolio[currentEntity].holdings.splice(idx, 1);
+  savePortfolio();
+  renderPortfolioHoldings();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════════════════════════
+async function loadEvents() {
+  try {
+    const res = await fetch('/api/events');
+    events = await res.json();
+  } catch { events = []; }
+  renderCalendar();
+}
+
+function saveEvents() {
+  fetch('/api/events', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(events)});
+}
+
+async function loadWatchlist() {
+  try {
+    const res = await fetch('/api/watchlist');
+    watchlist = await res.json();
+  } catch { watchlist = []; }
+}
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calTitle').textContent = `${months[calMonth]} ${calYear}`;
+
+  const grid = document.getElementById('calGrid');
+  const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date().toISOString().slice(0, 10);
+
+  const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = dayHeaders.map(d => `<div class="cal-day-header">${d}</div>`).join('');
+
+  // Prev month days
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = prevDays - i;
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  // This month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === today;
+    const isSelected = dateStr === calSelectedDate;
+    const dayEvents = events.filter(e => e.date === dateStr);
+    const evDots = dayEvents.slice(0, 3).map(e => {
+      const cls = eventBadgeClass(e.type);
+      return `<span class="cal-event-dot ${cls}">${e.title||e.ticker||''}</span>`;
+    }).join('');
+
+    html += `<div class="cal-day${isToday?' today':''}${isSelected?' selected':''}" onclick="selectCalDay('${dateStr}')">
+      <div class="cal-day-num">${d}</div>${evDots}</div>`;
+  }
+
+  // Next month padding
+  const totalCells = firstDay + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for (let d = 1; d <= remaining; d++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  grid.innerHTML = html;
+  renderCalSidebar();
+}
+
+function selectCalDay(dateStr) {
+  calSelectedDate = dateStr;
+  renderCalendar();
+}
+
+function eventBadgeClass(type) {
+  const map = {Earnings:'bg-g', Dividend:'bg-c', Conference:'bg-p', Regulatory:'bg-a', 'Product Launch':'bg-b', Other:'bg-b'};
+  return map[type] || 'bg-b';
+}
+
+function renderCalSidebar() {
+  const dayEvents = events.filter(e => e.date === calSelectedDate);
+  const title = document.getElementById('calDayTitle');
+  const d = new Date(calSelectedDate + 'T00:00:00');
+  title.textContent = d.toLocaleDateString('en-AU', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  const el = document.getElementById('calEvents');
+  if (dayEvents.length === 0) {
+    el.innerHTML = '<div style="color:var(--txt3);font-size:13px;padding:16px;text-align:center">No events on this day</div>';
+    return;
+  }
+
+  el.innerHTML = dayEvents.map((e, i) => `
+    <div class="cal-event-item" style="border-left-color:var(${eventColor(e.type)})">
+      <div class="ev-title"><span class="bg ${eventBadgeClass(e.type)}" style="margin-right:6px">${e.type}</span> ${e.title}</div>
+      <div class="ev-meta">${e.ticker ? e.ticker + ' \u2022 ' : ''}${e.notes || ''}</div>
+      <button class="bn-icon" style="margin-top:4px" onclick="removeEvent(${i})" title="Delete">\u2715</button>
+    </div>
+  `).join('');
+}
+
+function eventColor(type) {
+  const map = {Earnings:'--grn', Dividend:'--cyan', Conference:'--purple', Regulatory:'--amber', 'Product Launch':'--acc'};
+  return map[type] || '--acc';
+}
+
+function showAddEvent() {
+  const html = `
+    <div class="modal-overlay" id="eventModal" onclick="if(event.target===this)this.remove()">
+      <div class="modal">
+        <h3>Add Event</h3>
+        <div class="form-row"><label>Date</label><input class="inp" id="evDate" type="date" value="${calSelectedDate}"></div>
+        <div class="form-row"><label>Type</label>
+          <select class="inp" id="evType">
+            <option>Earnings</option><option>Dividend</option><option>Conference</option>
+            <option>Regulatory</option><option>Product Launch</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Ticker (optional)</label><input class="inp" id="evTicker" placeholder="CBA"></div>
+        <div class="form-row"><label>Title</label><input class="inp" id="evTitle" placeholder="CBA Half Year Results"></div>
+        <div class="form-row"><label>Notes</label><input class="inp" id="evNotes" placeholder="Optional notes..."></div>
+        <div class="form-actions">
+          <button class="bn bn-s" onclick="document.getElementById('eventModal').remove()">Cancel</button>
+          <button class="bn bn-p" onclick="addEvent()">Add</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function addEvent() {
+  const date = document.getElementById('evDate').value;
+  const type = document.getElementById('evType').value;
+  const ticker = document.getElementById('evTicker').value.trim().toUpperCase();
+  const title = document.getElementById('evTitle').value.trim();
+  const notes = document.getElementById('evNotes').value.trim();
+  if (!date || !title) return;
+
+  events.push({id: Date.now().toString(), date, type, ticker, title, notes, exchange: currentExchange});
+  saveEvents();
+  document.getElementById('eventModal').remove();
+  calSelectedDate = date;
+  renderCalendar();
+}
+
+function removeEvent(idx) {
+  const dayEvents = events.filter(e => e.date === calSelectedDate);
+  const ev = dayEvents[idx];
+  if (!ev) return;
+  events = events.filter(e => e.id !== ev.id);
+  saveEvents();
+  renderCalendar();
+}
+
+</script>
+</body>
+</html>
