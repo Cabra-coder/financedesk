@@ -1,6 +1,6 @@
-# FinanceDesk — React Artifact (v4)
+# FinanceDesk w/ 2 different versions currently
 
-A personal finance application built as a single-file React artifact for Claude's artifact environment. Stock screener, individual stock research, portfolio manager, and event calendar targeting ASX, NYSE, and NASDAQ.
+A personal finance application built as a single-file React artifact for Claude's artifact environment. Stock screener, individual stock research, portfolio manager, and event calendar targeting ASX, NYSE, and NASDAQ. Additional features to be added over time. Currently (27/3/26) the Pythin version is the one being advanced.
 
 ## Features
 
@@ -11,32 +11,11 @@ A personal finance application built as a single-file React artifact for Claude'
 
 ## Data
 
-- **Mock data** included for ~60 ASX stocks (mega-cap to micro-cap), ~20 NYSE, ~20 NASDAQ
-- **EODHD API** integration (delayed live quotes, historical EOD, fundamentals) — requires API key
-- ⚠️ **Known issue**: CORS blocks browser-side API calls in the artifact environment. A Python rewrite is planned to resolve this.
+see individual branches
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `finance-app.jsx` | Complete single-file React application (v4) |
-| `CLAUDE.md` | Project context file for Claude — architecture, API details, design system, pitfalls |
-| `README.md` | This file |
-
-## Status
-
-This is the React/artifact version of FinanceDesk. A Python-based rewrite using Flask + yfinance is planned to eliminate CORS issues and enable reliable Yahoo Finance data for ASX, NYSE, and NASDAQ.
-
-## Usage
-
-This file is designed to run as a Claude artifact (`.jsx` rendered in claude.ai). Upload `finance-app.jsx` as an artifact to use it. For development context, upload `CLAUDE.md` at the start of any Claude conversation.
-
-## Design
-
-- Dark terminal aesthetic with DM Sans + JetBrains Mono typography
-- CSS custom properties throughout
-- Responsive layout (desktop + mobile)
-- Persistent storage via Claude's `window.storage` API
+see individual branches
 
 ## License
 
